@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_TESTS "Build tests" OFF)
 
 project(print)
 
@@ -34,3 +35,15 @@ install(TARGETS print
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
 install(EXPORT print-config DESTINATION cmake)
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(third-party/gtest)
+    file(GLOB print_TEST_SOURCES "tests/*.cpp")
+    foreach(TEST_SOURCE ${print_TEST_SOURCES})
+        add_executable(check ${TEST_SOURCE})
+        target_link_libraries(check gtest_main print)
+        add_test(NAME check COMMAND check)
+    endforeach(TEST_SOURCE ${print_TEST_SOURCES})
+endif()
+
